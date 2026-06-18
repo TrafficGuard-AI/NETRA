@@ -1,0 +1,12 @@
+# Normalize line endings across Mac / Windows checkouts
+* text=auto
+
+# OS-specific scripts keep their native endings
+*.sh    text eol=lf
+*.bat   text eol=crlf
+
+# Binary assets — never normalize
+*.pt    binary
+*.onnx  binary
+*.jpg   binary
+*.png   binary

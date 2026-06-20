@@ -39,6 +39,19 @@ def _box(img: np.ndarray, bbox: list[int], label: str, color: tuple) -> None:
     cv2.putText(img, label, (x1 + 2, y1 - 4), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 
 
+def label_condition(image: np.ndarray, condition: str) -> np.ndarray:
+    """Burn the active weather condition into the top-left of the evidence frame.
+
+    Drawn in place (callers pass an already-copied annotated frame). A black
+    outline under coloured text keeps it legible over any background.
+    """
+    text = f"Weather: {condition}"
+    org = (10, 26)
+    cv2.putText(image, text, org, cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 3, cv2.LINE_AA)
+    cv2.putText(image, text, org, cv2.FONT_HERSHEY_SIMPLEX, 0.6, (60, 220, 255), 1, cv2.LINE_AA)
+    return image
+
+
 def watermark(image: np.ndarray, location: str, timestamp: str) -> np.ndarray:
     """Burn a provenance bar (brand · location · time) along the bottom."""
     h, w = image.shape[:2]

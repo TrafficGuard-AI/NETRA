@@ -45,6 +45,7 @@ class ViolationStatusUpdate(BaseModel):
 
 class AnalysisResult(BaseModel):
     quality: QualityReport
+    weather_condition: str | None = None
     detections: int
     road_users: list[RoadUserCount]
     violations: list[ViolationOut]

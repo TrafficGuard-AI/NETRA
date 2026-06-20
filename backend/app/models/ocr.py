@@ -1,38 +1,59 @@
 import re
 
 import numpy as np
+from PIL import Image
 
 from app.config import settings
 
 # Indian plate format, e.g. "MH 12 AB 1234"
-PLATE_PATTERN = re.compile(r"^[A-Z]{2}\s?\d{1,2}\s?[A-Z]{1,3}\s?\d{4}$")
-# Common OCR confusions to normalise before validating.
-CORRECTIONS = str.maketrans({"O": "0", "I": "1", "S": "5", "B": "8"})
+PLATE_PATTERN = re.compile(r"^[A-Z]{2}\d{1,2}[A-Z]{1,3}\d{4}$")
+_NON_ALNUM = re.compile(r"[^A-Z0-9]")
+
+
+def is_valid(plate: str) -> bool:
+    return bool(PLATE_PATTERN.match(plate))
 
 
 class PlateReader:
-    """EasyOCR wrapper for license-plate text extraction (lazy-loaded)."""
+    """TrOCR wrapper for license-plate text recognition (lazy-loaded).
+
+    TrOCR is recognition-only — it expects a single, tightly cropped plate
+    image and returns the full string. Detection is handled upstream by YOLO.
+    """
 
     def __init__(self):
-        self._reader = None
+        self._processor = None
+        self._model = None
 
-    @property
-    def reader(self):
-        if self._reader is None:
-            import easyocr
+    def _load(self):
+        if self._model is None:
+            import torch
+            from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 
-            self._reader = easyocr.Reader(settings.ocr_languages, gpu=False)
-        return self._reader
+            self._processor = TrOCRProcessor.from_pretrained(settings.trocr_model)
+            self._model = VisionEncoderDecoderModel.from_pretrained(settings.trocr_model)
+            self._model.eval()
+            self._torch = torch
+        return self._processor, self._model
 
     def read(self, plate_image: np.ndarray) -> str | None:
-        results = self.reader.readtext(plate_image, detail=0)
-        if not results:
-            return None
-        text = "".join(results).upper().replace(" ", "")
-        if PLATE_PATTERN.match(text):
-            return text
-        corrected = text.translate(CORRECTIONS)
-        return corrected if PLATE_PATTERN.match(corrected) else text
+        processor, model = self._load()
+
+        # TrOCR wants an RGB PIL image; crops arrive grayscale (CLAHE) or BGR.
+        if plate_image.ndim == 2:
+            pil = Image.fromarray(plate_image).convert("RGB")
+        else:
+            pil = Image.fromarray(plate_image[..., ::-1]).convert("RGB")  # BGR→RGB
+
+        pixel_values = processor(images=pil, return_tensors="pt").pixel_values
+        with self._torch.no_grad():
+            generated = model.generate(pixel_values, max_new_tokens=16)
+        raw = processor.batch_decode(generated, skip_special_tokens=True)[0]
+
+        text = _NON_ALNUM.sub("", raw.upper())
+        if text.startswith("IND"):  # the embossed "IND" tag, not part of the number
+            text = text[3:]
+        return text if len(text) >= 4 else None
 
 
 plate_reader = PlateReader()

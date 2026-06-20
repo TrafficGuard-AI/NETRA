@@ -5,18 +5,27 @@ VIOLATION_COLOR = (0, 0, 255)  # red (BGR)
 OK_COLOR = (0, 200, 0)  # green
 
 
-def annotate(image: np.ndarray, detections: list[dict], violations: list[dict]) -> np.ndarray:
-    """Draw detection boxes (green) and violation boxes (red) onto a copy."""
+def annotate(
+    image: np.ndarray,
+    detections: list[dict],
+    violations: list[dict],
+) -> np.ndarray:
+    """Draw detection (green), violation (red) and plate (teal) boxes on a copy."""
     canvas = image.copy()
     flagged = {v["vehicle_id"] for v in violations}
 
     for d in detections:
-        if d["id"] in flagged or d["class"] != "vehicle":
+        if d["id"] in flagged or d["kind"] != "vehicle":
             continue
-        _box(canvas, d["bbox"], f"{d['category']} {d['confidence']:.0%}", OK_COLOR)
+        label = f"{d['category']} {d['confidence']:.0%}"
+        if d["occupants"] >= 2:
+            label += f" x{d['occupants']}"
+        _box(canvas, d["bbox"], label, OK_COLOR)
 
     for v in violations:
         label = f"{v['type']} {v['confidence']:.0%}"
+        if v.get("license_plate"):
+            label += f" [{v['license_plate']}]"
         _box(canvas, v["bbox"], label, VIOLATION_COLOR)
 
     return canvas
@@ -28,3 +37,20 @@ def _box(img: np.ndarray, bbox: list[int], label: str, color: tuple) -> None:
     (w, h), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
     cv2.rectangle(img, (x1, y1 - h - 6), (x1 + w + 4, y1), color, -1)
     cv2.putText(img, label, (x1 + 2, y1 - 4), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+
+
+def watermark(image: np.ndarray, location: str, timestamp: str) -> np.ndarray:
+    """Burn a provenance bar (brand · location · time) along the bottom."""
+    h, w = image.shape[:2]
+    bar = max(28, h // 26)
+    overlay = image.copy()
+    cv2.rectangle(overlay, (0, h - bar), (w, h), (0, 0, 0), -1)
+    image = cv2.addWeighted(overlay, 0.55, image, 0.45, 0)
+
+    scale = bar / 42
+    y = h - int(bar * 0.32)
+    cv2.putText(image, "TrafficGuard AI", (12, y), cv2.FONT_HERSHEY_SIMPLEX, scale, (120, 220, 200), 1, cv2.LINE_AA)
+    right = f"{location}  |  {timestamp}"
+    (tw, _), _ = cv2.getTextSize(right, cv2.FONT_HERSHEY_SIMPLEX, scale, 1)
+    cv2.putText(image, right, (w - tw - 12, y), cv2.FONT_HERSHEY_SIMPLEX, scale, (240, 240, 240), 1, cv2.LINE_AA)
+    return image

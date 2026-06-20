@@ -13,7 +13,14 @@ env/
 *.pt
 *.onnx
 *.pth
+*.safetensors
 !data/annotations/**
+
+# ---- Model / HuggingFace caches (TrOCR, torch, ultralytics) ----
+.cache/
+huggingface/
+.huggingface/
+*.HF_HOME
 
 # ---- Data & generated artifacts ----
 data/uploads/
@@ -25,7 +32,12 @@ data/evidence/
 node_modules/
 frontend/dist/
 frontend/.vite/
+coverage/
 *.log
+
+# ---- Testing / coverage ----
+.coverage
+htmlcov/
 
 # ---- Env & secrets ----
 .env
@@ -37,3 +49,5 @@ frontend/.vite/
 Thumbs.db
 .idea/
 .vscode/
+*.swp
+*~

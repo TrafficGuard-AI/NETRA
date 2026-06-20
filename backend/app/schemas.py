@@ -19,8 +19,39 @@ class ViolationOut(BaseModel):
         from_attributes = True
 
 
+class QualityReport(BaseModel):
+    score: int
+    sharpness: int
+    brightness: int
+    contrast: int
+    corrections: list[str]
+
+
+class RoadUserCount(BaseModel):
+    category: str
+    count: int
+
+
+class RuleInfo(BaseModel):
+    code: str
+    name: str
+    severity: str
+    status: str  # active | needs-weight | needs-config | planned
+
+
+class ViolationStatusUpdate(BaseModel):
+    status: str  # pending | confirmed | dismissed
+
+
 class AnalysisResult(BaseModel):
-    quality_score: int
+    quality: QualityReport
     detections: int
+    road_users: list[RoadUserCount]
     violations: list[ViolationOut]
     evidence_url: str
+
+
+class BatchResult(BaseModel):
+    processed: int
+    total_violations: int
+    results: list[AnalysisResult]

@@ -88,6 +88,20 @@ def normalize(image: np.ndarray, size: int = 640) -> np.ndarray:
     return canvas
 
 
+def assess(image: np.ndarray, condition: str | None = None) -> QualityReport:
+    """Score a frame's quality (0-100) WITHOUT modifying it.
+
+    Used after the weather-adaptive edge preprocessor has already cleaned and
+    resized the frame: we only want a quality report for the UI/metadata, not a
+    second round of enhancement. `condition` (FOG/NIGHT/DAY-RAIN), when given,
+    is surfaced as the applied correction.
+    """
+    sharp, mean, std = _metrics(image)
+    overall, s, b, c = _score(sharp, mean, std)
+    corrections = [f"Weather-adaptive: {condition}"] if condition else []
+    return QualityReport(score=overall, sharpness=s, brightness=b, contrast=c, corrections=corrections)
+
+
 def preprocess(image: np.ndarray) -> tuple[np.ndarray, QualityReport]:
     """Assess the frame, apply needed corrections, return (image, report)."""
     sharp, mean, std = _metrics(image)

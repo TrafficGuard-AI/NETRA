@@ -20,7 +20,23 @@ class Settings(BaseSettings):
     weights_dir: Path = BASE_DIR / "backend" / "weights"
     yolo_weights: str = str(BASE_DIR / "backend" / "weights" / "yolov8n.pt")
     confidence_threshold: float = 0.4
-    ocr_languages: list[str] = ["en"]
+    # Plate OCR uses TrOCR (transformer OCR). Swap to "microsoft/trocr-small-printed"
+    # for a faster, lighter model on CPU at some accuracy cost.
+    trocr_model: str = "microsoft/trocr-base-printed"
+
+    # Violation rules
+    # Drop a helmet-detection YOLO weight here to auto-enable the helmet rule.
+    helmet_weights: str = str(BASE_DIR / "backend" / "weights" / "helmet.pt")
+    helmet_imgsz: int = 960    # higher res — small heads are missed at 640
+    helmet_conf: float = 0.3
+
+    # License plates: a dedicated plate weight if you have one, else the helmet
+    # model's "Plate" class is reused automatically.
+    plate_weights: str = str(BASE_DIR / "backend" / "weights" / "plate.pt")
+    plate_conf: float = 0.25
+    # Red-light running needs a known stop line, so it's opt-in per camera.
+    red_light_enforcement: bool = False
+    stop_line_frac: float = 0.6  # stop line as a fraction of image height
 
     class Config:
         env_file = ".env"

@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
-import { UploadCloud } from "lucide-react";
+import { ImageUp, Loader2 } from "lucide-react";
 import { uploadImage } from "../api.js";
 
-export default function UploadPanel({ onResult }) {
+export default function UploadPanel({ onResult, onPreview, onStart, location }) {
   const inputRef = useRef(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
@@ -10,12 +10,14 @@ export default function UploadPanel({ onResult }) {
 
   const handleFile = async (file) => {
     if (!file) return;
+    onPreview?.(URL.createObjectURL(file));
+    onStart?.();
     setBusy(true);
     setError(null);
     try {
-      onResult(await uploadImage(file));
+      onResult(await uploadImage(file, location));
     } catch {
-      setError("Upload failed — is the backend running?");
+      setError("Upload failed — make sure the backend is running.");
     } finally {
       setBusy(false);
     }
@@ -23,8 +25,8 @@ export default function UploadPanel({ onResult }) {
 
   return (
     <div
-      className={`dropzone${dragging ? " is-dragging" : ""}`}
-      onClick={() => inputRef.current?.click()}
+      className={`dropzone${dragging ? " is-dragging" : ""}${busy ? " is-busy" : ""}`}
+      onClick={() => !busy && inputRef.current?.click()}
       onDragOver={(e) => {
         e.preventDefault();
         setDragging(true);
@@ -43,9 +45,15 @@ export default function UploadPanel({ onResult }) {
         hidden
         onChange={(e) => handleFile(e.target.files?.[0])}
       />
-      <UploadCloud size={28} strokeWidth={1.5} />
+      <span className="dropzone-icon">
+        {busy ? (
+          <Loader2 size={26} strokeWidth={1.75} className="spin" />
+        ) : (
+          <ImageUp size={26} strokeWidth={1.5} />
+        )}
+      </span>
       <p className="dropzone-title">
-        {busy ? "Analyzing…" : "Drop a traffic image or click to browse"}
+        {busy ? "Analyzing frame…" : "Drop a traffic image, or click to browse"}
       </p>
       <span className="dropzone-hint">JPG or PNG · single frame</span>
       {error && <span className="dropzone-error">{error}</span>}

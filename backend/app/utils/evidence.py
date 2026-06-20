@@ -1,3 +1,4 @@
+import json
 import uuid
 from pathlib import Path
 
@@ -20,3 +21,15 @@ def save_evidence(annotated: np.ndarray) -> Path:
     path = settings.evidence_dir / f"{uuid.uuid4().hex}.jpg"
     cv2.imwrite(str(path), annotated)
     return path
+
+
+def save_metadata(evidence_id: str, meta: dict) -> Path:
+    """Write a JSON sidecar (the evidence package) next to the image."""
+    path = settings.evidence_dir / f"{evidence_id}.json"
+    path.write_text(json.dumps(meta, indent=2))
+    return path
+
+
+def load_metadata(evidence_id: str) -> dict | None:
+    path = settings.evidence_dir / f"{evidence_id}.json"
+    return json.loads(path.read_text()) if path.exists() else None

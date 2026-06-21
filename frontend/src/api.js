@@ -11,11 +11,21 @@ export const uploadImage = (file, location) => {
   return api.post("/upload", form).then((r) => r.data);
 };
 
+export const uploadVideo = (file, location) => {
+  const form = new FormData();
+  form.append("file", file);
+  if (location) form.append("location", location);
+  return api.post("/video-upload", form).then((r) => r.data);
+};
+
 export const getViolations = (params) =>
   api.get("/violations", { params }).then((r) => r.data);
 
 export const updateViolationStatus = (id, status) =>
   api.patch(`/violations/${id}`, { status }).then((r) => r.data);
+
+export const getViolationEvidence = (id) =>
+  api.get(`/violations/${id}/evidence`).then((r) => r.data);
 
 export const getSummary = () =>
   api.get("/analytics/summary").then((r) => r.data);

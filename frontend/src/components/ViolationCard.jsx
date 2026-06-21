@@ -9,8 +9,6 @@ const SEVERITY_CLASS = {
 const label = (type) =>
   type.toLowerCase().replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
-const vehicleIcon = (type) => (type === "Two-Wheeler" ? Bike : Car);
-
 const when = (ts) => {
   if (!ts) return "—";
   return new Date(ts).toLocaleString("en-IN", {
@@ -22,7 +20,6 @@ const when = (ts) => {
 };
 
 export default function ViolationCard({ violation }) {
-  const VIcon = vehicleIcon(violation.vehicle_type);
   const pct = Math.round(violation.confidence * 100);
 
   return (
@@ -38,7 +35,11 @@ export default function ViolationCard({ violation }) {
       </header>
 
       <div className="violation-row">
-        <VIcon size={15} strokeWidth={1.75} />
+        {violation.vehicle_type === "Two-Wheeler" ? (
+          <Bike size={15} strokeWidth={1.75} />
+        ) : (
+          <Car size={15} strokeWidth={1.75} />
+        )}
         <span>{violation.vehicle_type}</span>
         <span className="plate">{violation.license_plate || "No plate"}</span>
       </div>

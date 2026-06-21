@@ -9,12 +9,11 @@ env/
 .mypy_cache/
 .ipynb_checkpoints/
 
-# ---- Models / weights (ignored anywhere they land) ----
-*.pt
+# ---- Models / weights ----
+# Small weights (≤10MB) are committed directly.
+# Large weights must never be committed — add them to a GitHub Release instead.
 *.onnx
-*.pth
 *.safetensors
-!data/annotations/**
 
 # ---- Model / HuggingFace caches (TrOCR, torch, ultralytics) ----
 .cache/
@@ -25,6 +24,7 @@ huggingface/
 # ---- Data & generated artifacts ----
 data/uploads/
 data/evidence/
+data/challans/
 *.db
 *.sqlite3
 

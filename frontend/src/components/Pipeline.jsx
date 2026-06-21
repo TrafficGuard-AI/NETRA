@@ -18,14 +18,10 @@ const STAGES = [
 ];
 
 export default function Pipeline({ analyzing, result }) {
-  const [active, setActive] = useState(-1);
+  const [active, setActive] = useState(0);
 
   useEffect(() => {
-    if (!analyzing) {
-      setActive(-1);
-      return;
-    }
-    setActive(0);
+    if (!analyzing) return;
     const id = setInterval(() => setActive((a) => (a + 1) % STAGES.length), 520);
     return () => clearInterval(id);
   }, [analyzing]);

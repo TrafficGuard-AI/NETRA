@@ -1,26 +1,15 @@
 import { useRef, useState } from "react";
 import { ImageUp, Loader2 } from "lucide-react";
-import { uploadImage } from "../api.js";
 
-export default function UploadPanel({ onResult, onPreview, onStart, location }) {
+// Thin multi-file picker. The parent owns the sequential analysis loop and all
+// per-file state; this just collects the chosen files and hands them up.
+export default function UploadPanel({ onFiles, busy }) {
   const inputRef = useRef(null);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(null);
   const [dragging, setDragging] = useState(false);
 
-  const handleFile = async (file) => {
-    if (!file) return;
-    onPreview?.(URL.createObjectURL(file));
-    onStart?.();
-    setBusy(true);
-    setError(null);
-    try {
-      onResult(await uploadImage(file, location));
-    } catch {
-      setError("Upload failed — make sure the backend is running.");
-    } finally {
-      setBusy(false);
-    }
+  const pick = (fileList) => {
+    const files = Array.from(fileList || []);
+    if (files.length) onFiles(files);
   };
 
   return (
@@ -29,21 +18,25 @@ export default function UploadPanel({ onResult, onPreview, onStart, location }) 
       onClick={() => !busy && inputRef.current?.click()}
       onDragOver={(e) => {
         e.preventDefault();
-        setDragging(true);
+        if (!busy) setDragging(true);
       }}
       onDragLeave={() => setDragging(false)}
       onDrop={(e) => {
         e.preventDefault();
         setDragging(false);
-        handleFile(e.dataTransfer.files?.[0]);
+        if (!busy) pick(e.dataTransfer.files);
       }}
     >
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/*,video/*"
+        multiple
         hidden
-        onChange={(e) => handleFile(e.target.files?.[0])}
+        onChange={(e) => {
+          pick(e.target.files);
+          e.target.value = ""; // allow re-selecting the same files
+        }}
       />
       <span className="dropzone-icon">
         {busy ? (
@@ -53,10 +46,11 @@ export default function UploadPanel({ onResult, onPreview, onStart, location }) 
         )}
       </span>
       <p className="dropzone-title">
-        {busy ? "Analyzing frame…" : "Drop a traffic image, or click to browse"}
+        {busy ? "Analyzing media…" : "Drop images or videos, or click to browse"}
       </p>
-      <span className="dropzone-hint">JPG or PNG · single frame</span>
-      {error && <span className="dropzone-error">{error}</span>}
+      <span className="dropzone-hint">
+        JPG, PNG or MP4/MOV · select multiple — analyzed one by one
+      </span>
     </div>
   );
 }

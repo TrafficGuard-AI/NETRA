@@ -15,17 +15,23 @@ export default function RawOutput({ result }) {
   // Reveal lines progressively whenever a new result arrives.
   useEffect(() => {
     if (!result) return;
-    setShown(0);
-    const id = setInterval(() => {
-      setShown((n) => {
-        if (n >= lines.length) {
-          clearInterval(id);
-          return n;
-        }
-        return n + 1;
-      });
-    }, 28);
-    return () => clearInterval(id);
+    let intervalId;
+    const resetId = setTimeout(() => {
+      setShown(0);
+      intervalId = setInterval(() => {
+        setShown((n) => {
+          if (n >= lines.length) {
+            clearInterval(intervalId);
+            return n;
+          }
+          return n + 1;
+        });
+      }, 28);
+    }, 0);
+    return () => {
+      clearTimeout(resetId);
+      clearInterval(intervalId);
+    };
   }, [json]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Keep the newest line in view while streaming.

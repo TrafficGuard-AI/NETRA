@@ -1,73 +1,54 @@
 :root {
-  /* Warm editorial paper palette */
-  --bg: #f7f5f1;
-  --surface: #ffffff;
-  --surface-2: #fbfaf8;
-  --border: #eae5dd;
-  --border-strong: #ddd6ca;
-  --text: #1a1714;
-  --muted: #4d473f;
-  --faint: #7c7468;
+  /* NETRA command-center palette — deep navy canvas, cyan/blue accents */
+  --bg: #070d18;
+  --surface: #0e1a2d;
+  --surface-2: #0a1626;
+  --panel-grad: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 38%);
+  --border: rgba(132, 168, 222, 0.13);
+  --border-strong: rgba(132, 168, 222, 0.26);
+  --text: #eaf1fb;
+  --muted: #9fb4d2;
+  --faint: #647a9c;
 
-  /* One refined accent + status hues */
-  --accent: #0f766e;
-  --accent-deep: #115e59;
-  --accent-soft: #e6f1ef;
-  --danger: #b3432d;
-  --danger-soft: #f8e9e4;
-  --warning: #9a6a1c;
-  --warning-soft: #f5eede;
-  --success: #3f7d52;
+  /* Accent + status hues */
+  --accent: #3b9eff;
+  --accent-deep: #2b7fe0;
+  --accent-soft: rgba(59, 158, 255, 0.13);
+  --cyan: #2dd4e8;
+  --violet: #a78bfa;
+  --danger: #fb5e73;
+  --danger-soft: rgba(251, 94, 115, 0.14);
+  --warning: #fbb540;
+  --warning-soft: rgba(251, 181, 64, 0.13);
+  --success: #36d39a;
+  --success-soft: rgba(54, 211, 154, 0.12);
+
+  /* Blueprint grid line */
+  --grid: rgba(255, 255, 255, 0.022);
 
   /* Radii */
   --r-sm: 9px;
   --r: 14px;
-  --r-lg: 20px;
+  --r-lg: 18px;
 
-  /* Layered, soft shadows */
-  --shadow-sm: 0 1px 2px rgba(26, 23, 20, 0.04);
-  --shadow: 0 1px 3px rgba(26, 23, 20, 0.05), 0 10px 28px -12px rgba(26, 23, 20, 0.12);
-  --shadow-lg: 0 2px 6px rgba(26, 23, 20, 0.06), 0 24px 48px -20px rgba(26, 23, 20, 0.22);
+  /* Deep control-room shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 18px 40px -28px rgba(0, 0, 0, 0.85);
+  --shadow-lg: 0 40px 120px -40px rgba(0, 0, 0, 0.85);
 
-  --ring: 0 0 0 3px var(--accent-soft);
+  --ring: 0 0 0 3px rgba(59, 158, 255, 0.22);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
-  --serif: "Fraunces", Georgia, serif;
+  --serif: "Inter", system-ui, -apple-system, sans-serif;
   --sans: "Inter", system-ui, -apple-system, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
 }
 
-/* Warm charcoal dark theme — keeps the editorial feel, lets evidence pop */
+/* Toggle "dark" = an even deeper NETRA night; both stay command-center. */
 [data-theme="dark"] {
-  --bg: #14110e;
-  --surface: #1e1a16;
-  --surface-2: #25201b;
-  --border: #2d2823;
-  --border-strong: #3c352d;
-  --text: #f1ece4;
-  --muted: #b3aa9d;
-  --faint: #8b8275;
-
-  --accent: #19a99a;
-  --accent-deep: #14b8a6;
-  --accent-soft: #13322d;
-  --danger: #e0664f;
-  --danger-soft: #391f19;
-  --warning: #d49a3f;
-  --warning-soft: #332815;
-  --success: #5aa86e;
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.35), 0 10px 28px -12px rgba(0, 0, 0, 0.55);
-  --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.4), 0 24px 48px -20px rgba(0, 0, 0, 0.65);
-}
-
-[data-theme="dark"] body {
-  background-image: radial-gradient(
-    1200px 600px at 80% -10%,
-    rgba(25, 169, 154, 0.08),
-    transparent 60%
-  );
+  --bg: #05080f;
+  --surface: #0c1626;
+  --surface-2: #081120;
 }
 
 * {
@@ -80,12 +61,14 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
-  background-image: radial-gradient(
-    1200px 600px at 80% -10%,
-    rgba(15, 118, 110, 0.05),
-    transparent 60%
-  );
+  background-color: var(--bg);
+  /* Navy glows + faint blueprint grid — the NETRA command-center canvas. */
+  background-image:
+    radial-gradient(1100px 520px at 86% -8%, rgba(40, 120, 200, 0.16), transparent 60%),
+    radial-gradient(900px 600px at 6% 108%, rgba(45, 160, 180, 0.08), transparent 55%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 46px 46px, 46px 46px;
   background-attachment: fixed;
   color: var(--text);
   font-family: var(--sans);
@@ -96,9 +79,9 @@ body {
 }
 
 h1, h2, h3, h4 {
-  font-family: var(--serif);
-  font-weight: 500;
-  letter-spacing: -0.018em;
+  font-family: var(--sans);
+  font-weight: 700;
+  letter-spacing: -0.01em;
   margin: 0;
   color: var(--text);
 }
@@ -144,4 +127,91 @@ button {
   background: var(--border-strong);
   border-radius: 999px;
   border: 3px solid var(--bg);
+}
+
+/* SensorFusion & Signed Provenance */
+.signed {
+  margin-top: auto;
+  background: rgba(54, 211, 154, 0.06);
+  border: 1px solid rgba(54, 211, 154, 0.2);
+  border-radius: 11px;
+  padding: 12px 14px;
+}
+.signed .s1 {
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.signed .s2 {
+  font-size: 10.5px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.sf {
+  display: flex;
+  flex-direction: column;
+}
+.sf-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.sf-title {
+  font-size: 13px;
+  font-weight: 700;
+}
+.concept-tag {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  background: var(--surface-2);
+  color: var(--muted);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.sf-thumbs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  height: 96px;
+  margin-bottom: 12px;
+}
+.sf-thumb {
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.sf-thumb svg {
+  display: block;
+  width: 100%;
+  flex: 1;
+}
+.sf-cap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 9px;
+  background: #091421;
+}
+.sf-tag {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+.sf-met {
+  font-size: 9.5px;
+}
+.sf-bars {
+  margin-bottom: 12px;
 }

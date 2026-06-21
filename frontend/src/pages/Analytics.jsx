@@ -20,9 +20,19 @@ import { useTheme } from "../hooks/useTheme.js";
 
 const pretty = (t) => t.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 
-const CHART = {
-  light: { grid: "#eae5dd", tick: "#5c564e", cursor: "#f7f5f1", accent: "#0f766e" },
-  dark: { grid: "#2d2823", tick: "#b3aa9d", cursor: "#25201b", accent: "#19a99a" },
+// NETRA command-center chart palette (both toggle states stay navy).
+const NETRA_CHART = {
+  grid: "rgba(132,168,222,0.1)",
+  tick: "#9FB4D2",
+  cursor: "rgba(132,168,222,0.06)",
+  accent: "#3B9EFF",
+};
+const CHART = { light: NETRA_CHART, dark: NETRA_CHART };
+const TOOLTIP = {
+  background: "#0c1827",
+  border: "1px solid rgba(132,168,222,0.2)",
+  borderRadius: 10,
+  fontSize: 13,
 };
 
 export default function Analytics() {
@@ -87,7 +97,7 @@ export default function Analytics() {
               <CartesianGrid strokeDasharray="3 3" stroke={c.grid} vertical={false} />
               <XAxis dataKey="name" tick={{ fontSize: 11, fill: c.tick }} />
               <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: c.tick }} />
-              <Tooltip cursor={{ fill: c.cursor }} contentStyle={{ borderRadius: 10, fontSize: 13 }} />
+              <Tooltip cursor={{ fill: c.cursor }} contentStyle={TOOLTIP} itemStyle={{ color: "#EAF1FB" }} labelStyle={{ color: "#9FB4D2" }} />
               <Bar dataKey="value" radius={[7, 7, 0, 0]} maxBarSize={64}>
                 {data.map((_, i) => (
                   <Cell key={i} fill={COLORS[i % COLORS.length]} />
@@ -107,7 +117,7 @@ export default function Analytics() {
                 <CartesianGrid strokeDasharray="3 3" stroke={c.grid} vertical={false} />
                 <XAxis dataKey="date" tick={{ fontSize: 11, fill: c.tick }} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: c.tick }} />
-                <Tooltip contentStyle={{ borderRadius: 10, fontSize: 13 }} />
+                <Tooltip contentStyle={TOOLTIP} itemStyle={{ color: "#EAF1FB" }} labelStyle={{ color: "#9FB4D2" }} />
                 <Line type="monotone" dataKey="count" stroke={c.accent} strokeWidth={2.5} dot={{ r: 3 }} />
               </LineChart>
             </ResponsiveContainer>

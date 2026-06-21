@@ -1,6 +1,6 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
-const COLORS = ["#0f766e", "#b3432d", "#9a6a1c", "#3f6f8f", "#6b5b95"];
+const COLORS = ["#3B9EFF", "#FB5E73", "#FBB540", "#2DD4E8", "#A78BFA", "#36D39A"];
 
 export default function Donut({ data, total }) {
   return (
@@ -22,10 +22,13 @@ export default function Donut({ data, total }) {
           </Pie>
           <Tooltip
             contentStyle={{
+              background: "#0c1827",
               borderRadius: 10,
-              border: "1px solid var(--border)",
+              border: "1px solid rgba(132,168,222,0.2)",
               fontSize: 13,
             }}
+            itemStyle={{ color: "#EAF1FB" }}
+            labelStyle={{ color: "#9FB4D2" }}
           />
         </PieChart>
       </ResponsiveContainer>

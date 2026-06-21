@@ -16,6 +16,13 @@ def save_upload(raw: bytes, suffix: str = ".jpg") -> tuple[Path, np.ndarray]:
     return path, image
 
 
+def save_binary_upload(raw: bytes, suffix: str = ".mp4") -> Path:
+    """Persist a non-image upload, such as a video, and return its path."""
+    path = settings.upload_dir / f"{uuid.uuid4().hex}{suffix}"
+    path.write_bytes(raw)
+    return path
+
+
 def save_evidence(annotated: np.ndarray) -> Path:
     """Write an annotated evidence image and return its path."""
     path = settings.evidence_dir / f"{uuid.uuid4().hex}.jpg"

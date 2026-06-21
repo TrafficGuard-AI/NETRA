@@ -23,8 +23,11 @@ def status() -> str:
 
 
 def _is_no_helmet(label: str) -> bool:
-    l = label.lower()
-    return ("helmet" in l and ("without" in l or "no" in l)) or l == "head"
+    l = label.lower().replace("-", "_").replace(" ", "_")
+    return (
+        ("helmet" in l and any(token in l for token in ("without", "no", "not")))
+        or l == "head"
+    )
 
 
 def _iou(a: list[int], b: list[int]) -> float:

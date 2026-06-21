@@ -6,9 +6,24 @@ import {
   ListChecks,
   Moon,
   ScanLine,
-  ShieldCheck,
   Sun,
 } from "lucide-react";
+
+// The NETRA "eye" mark from the deck.
+function EyeMark() {
+  return (
+    <svg viewBox="0 0 32 32" width="22" height="22" fill="none" aria-hidden>
+      <circle cx="16" cy="16" r="11" stroke="currentColor" strokeWidth="2.4" />
+      <circle cx="16" cy="16" r="4.4" fill="currentColor" />
+      <path
+        d="M5 16H2M30 16h-3M16 5V2M16 30v-3"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 import { getHealth } from "../api.js";
 import { toggleTheme, useTheme } from "../hooks/useTheme.js";
 
@@ -44,16 +59,16 @@ export default function Layout() {
       <aside className="sidebar">
         <div className="brand">
           <span className="brand-mark">
-            <ShieldCheck size={20} strokeWidth={2} />
+            <EyeMark />
           </span>
           <div>
-            <strong>TrafficGuard</strong>
-            <span className="brand-sub">AI Enforcement</span>
+            <strong>NETRA</strong>
+            <span className="brand-sub">Command Center</span>
           </div>
         </div>
 
         <nav>
-          <p className="nav-heading">Workspace</p>
+          <p className="nav-heading">Monitor</p>
           {NAV.map(({ to, label, icon: Icon, end }) => (
             <NavLink key={to} to={to} end={end} className="nav-link">
               <Icon size={18} strokeWidth={1.75} />

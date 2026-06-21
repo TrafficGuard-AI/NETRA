@@ -44,12 +44,26 @@ class ViolationStatusUpdate(BaseModel):
 
 
 class AnalysisResult(BaseModel):
+    media_type: str = "image"
     quality: QualityReport
     weather_condition: str | None = None
     detections: int
     road_users: list[RoadUserCount]
     violations: list[ViolationOut]
     evidence_url: str
+
+
+class VideoAnalysisResult(BaseModel):
+    media_type: str = "video"
+    quality: QualityReport
+    weather_condition: str | None = None
+    detections: int
+    road_users: list[RoadUserCount]
+    violations: list[ViolationOut]
+    evidence_url: str
+    frames_processed: int
+    sampled_fps: float
+    duration_seconds: float | None = None
 
 
 class BatchResult(BaseModel):

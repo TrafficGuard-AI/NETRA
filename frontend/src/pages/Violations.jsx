@@ -1,11 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
-import { Check, ImageOff, ListChecks, Search, X } from "lucide-react";
+import { ImageOff, ListChecks, Search } from "lucide-react";
 import PageHeader from "../components/PageHeader.jsx";
 import EmptyState from "../components/EmptyState.jsx";
 import ViolationModal from "../components/ViolationModal.jsx";
 import { evidenceUrl, getViolations, updateViolationStatus } from "../api.js";
 
-const TYPES = ["", "TRIPLE_RIDING", "HELMET_NON_COMPLIANCE"];
+const TYPES = [
+  "",
+  "TRIPLE_RIDING",
+  "HELMET_NON_COMPLIANCE",
+  "RED_LIGHT_VIOLATION",
+  "SEATBELT_NON_COMPLIANCE",
+  "WRONG_SIDE_DRIVING",
+  "ILLEGAL_PARKING",
+];
 const SEVERITY_CLASS = { HIGH: "badge danger", MEDIUM: "badge warning", LOW: "badge" };
 const STATUS_CLASS = { confirmed: "tag ok", dismissed: "tag muted", pending: "tag pending" };
 const pretty = (t) => t.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
@@ -79,7 +87,6 @@ export default function Violations() {
               <th>Location</th>
               <th>Confidence</th>
               <th>Status</th>
-              <th>Review</th>
             </tr>
           </thead>
           <tbody>
@@ -103,24 +110,6 @@ export default function Violations() {
                 <td>{Math.round(v.confidence * 100)}%</td>
                 <td>
                   <span className={STATUS_CLASS[v.status] || "tag muted"}>{v.status}</span>
-                </td>
-                <td onClick={(e) => e.stopPropagation()}>
-                  <div className="row-actions">
-                    <button
-                      className="icon-btn confirm"
-                      title="Confirm"
-                      onClick={() => setStatus(v.id, "confirmed")}
-                    >
-                      <Check size={15} strokeWidth={2.2} />
-                    </button>
-                    <button
-                      className="icon-btn dismiss"
-                      title="Dismiss"
-                      onClick={() => setStatus(v.id, "dismissed")}
-                    >
-                      <X size={15} strokeWidth={2.2} />
-                    </button>
-                  </div>
                 </td>
               </tr>
             ))}

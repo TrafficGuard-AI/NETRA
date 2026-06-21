@@ -83,7 +83,7 @@ export default function Dashboard() {
             <h2>Get started</h2>
           </div>
           <p className="panel-copy">
-            Upload a junction snapshot and TrafficGuard will preprocess it, detect
+            Upload a junction snapshot and NETRA will preprocess it, detect
             road users, flag violations and read plates — in one pass.
           </p>
           <Link to="/analyze" className="btn-primary lg">

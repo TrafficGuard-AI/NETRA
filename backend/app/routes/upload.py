@@ -21,8 +21,6 @@ from app.utils.annotator import annotate, label_condition, watermark
 from app.utils.challan import build_challan, save_challans
 from app.utils.evidence import save_binary_upload, save_evidence, save_metadata, save_upload
 
-# Repo-root module (see app.config for the sys.path wiring that makes this import
-# work when the backend runs with CWD=backend/).
 from ultimate_edge_preprocessor import DynamicTrafficPreprocessor
 
 router = APIRouter()

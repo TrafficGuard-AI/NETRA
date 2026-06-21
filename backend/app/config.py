@@ -1,16 +1,9 @@
-import sys
 from pathlib import Path
 
 from pydantic_settings import BaseSettings
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = BASE_DIR / "data"
-
-# The backend runs with CWD=backend/ (see run.bat / run.sh), so repo-root
-# modules like `ultimate_edge_preprocessor` aren't importable by default.
-# Put the repo root on sys.path so they can be imported package-wide.
-if str(BASE_DIR) not in sys.path:
-    sys.path.insert(0, str(BASE_DIR))
 
 
 class Settings(BaseSettings):

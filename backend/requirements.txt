@@ -7,6 +7,10 @@ sqlalchemy==2.0.35
 pillow==10.4.0
 numpy==1.26.4
 opencv-python-headless==4.10.0.84
+# CPU-only torch — avoids downloading 2GB of CUDA libs on Render's CPU servers
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.4.0+cpu
+torchvision==0.19.0+cpu
 ultralytics==8.3.0
 transformers==4.46.3
 pymongo==4.10.1

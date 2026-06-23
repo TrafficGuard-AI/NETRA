@@ -24,6 +24,7 @@ class PlateReader:
     def __init__(self):
         self._processor = None
         self._model = None
+        self._failed = False  # set once if the model can't load — don't retry every call
 
     def _load(self):
         if self._model is None:
@@ -37,23 +38,32 @@ class PlateReader:
         return self._processor, self._model
 
     def read(self, plate_image: np.ndarray) -> str | None:
-        processor, model = self._load()
+        # OCR is the heaviest stage; on a tiny host it can OOM. A plate read is
+        # best-effort metadata — never let it crash the whole analysis request.
+        if not settings.ocr_enabled or self._failed:
+            return None
+        try:
+            processor, model = self._load()
 
-        # TrOCR wants an RGB PIL image; crops arrive grayscale (CLAHE) or BGR.
-        if plate_image.ndim == 2:
-            pil = Image.fromarray(plate_image).convert("RGB")
-        else:
-            pil = Image.fromarray(plate_image[..., ::-1]).convert("RGB")  # BGR→RGB
+            # TrOCR wants an RGB PIL image; crops arrive grayscale (CLAHE) or BGR.
+            if plate_image.ndim == 2:
+                pil = Image.fromarray(plate_image).convert("RGB")
+            else:
+                pil = Image.fromarray(plate_image[..., ::-1]).convert("RGB")  # BGR→RGB
 
-        pixel_values = processor(images=pil, return_tensors="pt").pixel_values
-        with self._torch.no_grad():
-            generated = model.generate(pixel_values, max_new_tokens=16)
-        raw = processor.batch_decode(generated, skip_special_tokens=True)[0]
+            pixel_values = processor(images=pil, return_tensors="pt").pixel_values
+            with self._torch.no_grad():
+                generated = model.generate(pixel_values, max_new_tokens=16)
+            raw = processor.batch_decode(generated, skip_special_tokens=True)[0]
 
-        text = _NON_ALNUM.sub("", raw.upper())
-        if text.startswith("IND"):  # the embossed "IND" tag, not part of the number
-            text = text[3:]
-        return text if len(text) >= 4 else None
+            text = _NON_ALNUM.sub("", raw.upper())
+            if text.startswith("IND"):  # the embossed "IND" tag, not part of the number
+                text = text[3:]
+            return text if len(text) >= 4 else None
+        except Exception as exc:  # OOM, download failure, decode error, etc.
+            self._failed = True
+            print(f"[ocr] plate reading disabled after failure: {exc}")
+            return None
 
 
 plate_reader = PlateReader()

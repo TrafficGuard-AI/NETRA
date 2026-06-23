@@ -28,9 +28,13 @@ class Settings(BaseSettings):
     weights_dir: Path = BASE_DIR / "backend" / "weights"
     yolo_weights: str = str(BASE_DIR / "backend" / "weights" / "yolov8n.pt")
     confidence_threshold: float = 0.4
-    # Plate OCR uses TrOCR (transformer OCR). Swap to "microsoft/trocr-small-printed"
-    # for a faster, lighter model on CPU at some accuracy cost.
-    trocr_model: str = "microsoft/trocr-base-printed"
+    # Plate OCR uses TrOCR (transformer OCR). The "small" model is ~240MB vs
+    # ~1.4GB for "base" — base OOMs a 512MB host, so small is the deploy default.
+    # Use "microsoft/trocr-base-printed" only on a host with ≥2GB RAM.
+    trocr_model: str = "microsoft/trocr-small-printed"
+    # Plate OCR is the heaviest stage. Set OCR_ENABLED=false on tiny hosts to
+    # skip it entirely — violations are still detected, just without plate text.
+    ocr_enabled: bool = True
 
     # Violation rules
     # Helmet/no-helmet detector. The bundled YOLO11 weight emits rider classes

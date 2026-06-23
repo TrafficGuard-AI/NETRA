@@ -50,3 +50,17 @@ export const evidenceUrl = (path) =>
 
 export const getHealth = () =>
   axios.get(`${API_ORIGIN}/health`).then((r) => r.data);
+
+// ── Challan evidence store (MongoDB) ──────────────────────────────────────
+export const getChallanTree = () =>
+  api.get("/challans").then((r) => r.data);
+
+export const getChallanList = (params) =>
+  api.get("/challans/list", { params }).then((r) => r.data);
+
+export const issueChallan = (id) =>
+  api.patch(`/challans/${id}/issue`).then((r) => r.data);
+
+// Challan crops are served from the backend's /challans static mount; the API
+// returns an evidence_url like "/challans/two_wheeler/HELMET/uuid.jpg".
+export const challanUrl = (url) => (url ? `${API_ORIGIN}${url}` : null);

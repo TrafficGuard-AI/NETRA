@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   BarChart3,
+  FileWarning,
   LayoutGrid,
   ListChecks,
   Moon,
@@ -31,6 +32,7 @@ const NAV = [
   { to: "/", label: "Overview", icon: LayoutGrid, end: true },
   { to: "/analyze", label: "Analyze", icon: ScanLine },
   { to: "/violations", label: "Records", icon: ListChecks },
+  { to: "/challans", label: "Challans", icon: FileWarning },
   { to: "/analytics", label: "Analytics", icon: BarChart3 },
 ];
 

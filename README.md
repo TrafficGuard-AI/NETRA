@@ -1,3 +1,14 @@
+---
+title: NETRA
+emoji: 🚦
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+pinned: false
+license: mit
+---
+
 # 🚦 TrafficGuard AI
 
 Automated photo identification & classification of traffic violations — built for

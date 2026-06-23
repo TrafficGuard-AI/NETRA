@@ -32,9 +32,12 @@ class Settings(BaseSettings):
     # ~1.4GB for "base" — base OOMs a 512MB host, so small is the deploy default.
     # Use "microsoft/trocr-base-printed" only on a host with ≥2GB RAM.
     trocr_model: str = "microsoft/trocr-small-printed"
-    # Plate OCR is the heaviest stage. Set OCR_ENABLED=false on tiny hosts to
-    # skip it entirely — violations are still detected, just without plate text.
-    ocr_enabled: bool = True
+    # Plate OCR is the heaviest stage — loading TrOCR can exceed a 512MB host's
+    # RAM and the OS SIGKILLs the worker (uncatchable in Python), hanging the
+    # request. So it's OFF by default for safe cloud deploys; violations are
+    # still detected, just without plate text. Set OCR_ENABLED=true on a host
+    # with enough RAM (e.g. your local machine) to read plates.
+    ocr_enabled: bool = False
 
     # Violation rules
     # Helmet/no-helmet detector. The bundled YOLO11 weight emits rider classes

@@ -1,0 +1,17 @@
+# Keep the image lean — only backend/ is needed at runtime.
+frontend/
+notebooks/
+docs/
+data/
+*.db
+.venv/
+venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+.git/
+.github/
+node_modules/
+.env
+.env.*
+!.env.example
